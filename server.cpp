@@ -8,7 +8,7 @@ Server::Server(QObject* parent): QObject(parent)
     server=new QTcpServer;
 
   connect(server, SIGNAL(newConnection()), this, SLOT(acceptConnection()));
-  server->listen(QHostAddress::LocalHost, 8888);
+  server->listen(QHostAddress::Any, 8888);
 }
 
 Server::~Server()
@@ -21,7 +21,7 @@ Server::~Server()
 
 void Server::acceptConnection()
 {
-  //Verbindung annehmen
+    //Verbindung annehmen
     client = server->nextPendingConnection();
     connect(client, SIGNAL(readyRead()), this, SLOT(startRead()));
 }

@@ -1,5 +1,6 @@
 QT -= gui
 QT += network
+QT += websockets
 
 CONFIG += c++17 console
 CONFIG -= app_bundle
@@ -10,7 +11,7 @@ CONFIG -= app_bundle
 
 SOURCES += \
         main.cpp \
-        server.cpp
+        websocketserver.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -18,4 +19,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    server.h
+    websocketserver.h

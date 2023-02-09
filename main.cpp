@@ -1,9 +1,9 @@
 #include <QCoreApplication>
-#include "server.h"
+#include "websocketserver.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    Server server;
+    WebSocketServer server = WebSocketServer(8888);
     return a.exec();
 }
