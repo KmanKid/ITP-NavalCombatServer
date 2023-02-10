@@ -23,14 +23,14 @@ WebSocketServer::~WebSocketServer() {
 void WebSocketServer::onNewConnection() {
     QWebSocket *socket = socketServer.nextPendingConnection();
 
-    if(socketArray[0] != nullptr)
+    if(game.playerOne.socket == nullptr)
     {
-        socketArray[1] = socket;
-        socket->sendTextMessage(QString("Player:2"));
-    }else
-    {
-        socketArray[0] = socket;
+        game.playerOne.socket = socket;
         socket->sendTextMessage(QString("Player:1"));
+    }else if (game.playerTwo.socket == nullptr)
+    {
+        game.playerTwo.socket = socket;
+        socket->sendTextMessage(QString("Player:2"));
     }
 
     connect(socket, &QWebSocket::textMessageReceived, this, &WebSocketServer::onTextMessageReceived);
@@ -40,17 +40,7 @@ void WebSocketServer::onNewConnection() {
 
 void WebSocketServer::onTextMessageReceived(QString message) {
     // This method has been deprecated.
-    QWebSocket *socket = qobject_cast<QWebSocket *>(sender());
-    if(socket == socketArray[0])
-    {
-        qDebug() << "Player One send:";
-    }
-    if(socket == socketArray[1])
-    {
-        qDebug() << "Player Two send:";
-    }
-
-    qDebug() << message;
+    game.processMessage(qobject_cast<QWebSocket *>(sender()),message);
 }
 
 void WebSocketServer::onSocketDisconnected() {

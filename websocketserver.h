@@ -1,6 +1,7 @@
 #ifndef WEBSOCKETSERVER_H
 #define WEBSOCKETSERVER_H
 
+#include "game.h"
 #include <QObject>
 #include <QStringLiteral>
 
@@ -21,6 +22,7 @@ private slots:
     void onBinaryMessageReceived(QByteArray message);
     void onSocketDisconnected();
 private:
+    Game game;
     QWebSocketServer socketServer;
     QWebSocket* socketArray[2];
 };
