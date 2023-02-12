@@ -6,6 +6,7 @@ class Ship
 {
 public:
     Ship();
+    Ship(int posX, int posY, int len, int ori);
     int posX;
     int posY;
     int length;

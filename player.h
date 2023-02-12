@@ -11,7 +11,7 @@ public:
     Player();
     // 0 means water, 1 means my Ship, 2 means my Ship hit -> enum ?
     QWebSocket* socket;
-    int myBoard[10][10];
+    int board[10][10];
     int score;
     Ship ships[10];
 };

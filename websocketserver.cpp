@@ -26,11 +26,12 @@ void WebSocketServer::onNewConnection() {
     if(game.playerOne.socket == nullptr)
     {
         game.playerOne.socket = socket;
-        socket->sendTextMessage(QString("Player:1"));
+        game.playerConnected(socket);
+        socket->sendTextMessage(QString("You are Player One"));
     }else if (game.playerTwo.socket == nullptr)
     {
         game.playerTwo.socket = socket;
-        socket->sendTextMessage(QString("Player:2"));
+        socket->sendTextMessage(QString("You are Player Two"));
     }
 
     connect(socket, &QWebSocket::textMessageReceived, this, &WebSocketServer::onTextMessageReceived);
