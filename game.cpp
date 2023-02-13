@@ -8,6 +8,7 @@ Game::Game()
 void Game::processMessage(QWebSocket* sender,QString message)
 {
     QStringList mSplit = message.split("-");
+
     if(mSplit[0] == "shot")
     {
         this->shoot(sender,mSplit[1].toInt(),mSplit[2].toInt());
@@ -15,12 +16,19 @@ void Game::processMessage(QWebSocket* sender,QString message)
 
     if(sender == playerOne.socket)
     {
-        //sender->sendTextMessage("setFieldState-left-0-3-3");
-        qDebug() << "Player One send: " << message;
+        if(mSplit[0] == "newShip")
+        {
+            this->playerOne.setShip(mSplit[1].toInt(),mSplit[2].toInt(),mSplit[3].toInt(),mSplit[4].toInt(),mSplit[5].toInt());
+            sendShipPositions(&playerOne);
+        }
     }
     if(sender==playerTwo.socket)
     {
-        qDebug() << "Player Two send: " << message;
+        if(mSplit[0] == "newShip")
+        {
+            this->playerTwo.setShip(mSplit[1].toInt(),mSplit[2].toInt(),mSplit[3].toInt(),mSplit[4].toInt(),mSplit[5].toInt());
+            sendShipPositions(&playerTwo);
+        }
     }
 }
 
@@ -54,7 +62,6 @@ void Game::sendShipPositions(Player* player)
             continue;
         }
         Ship* currentShip = &player->ships[i];
-        qDebug() << "processing:" << currentShip->length;
 
         for (int ii = 0; ii < currentShip->length; ii++)
         {

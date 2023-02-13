@@ -14,6 +14,7 @@ public:
     int board[10][10];
     int score;
     Ship ships[10];
+    void setShip(int x, int y,int size, int orientation, int number);
 };
 
 #endif // PLAYER_H
