@@ -23,16 +23,7 @@ WebSocketServer::~WebSocketServer() {
 void WebSocketServer::onNewConnection() {
     QWebSocket *socket = socketServer.nextPendingConnection();
 
-    if(game.playerOne.socket == nullptr)
-    {
-        game.playerOne.socket = socket;
-        game.playerConnected(socket);
-        socket->sendTextMessage(QString("You are Player One"));
-    }else if (game.playerTwo.socket == nullptr)
-    {
-        game.playerTwo.socket = socket;
-        socket->sendTextMessage(QString("You are Player Two"));
-    }
+    game.playerConnected(socket);
 
     connect(socket, &QWebSocket::textMessageReceived, this, &WebSocketServer::onTextMessageReceived);
     connect(socket, &QWebSocket::binaryMessageReceived, this, &WebSocketServer::onBinaryMessageReceived);

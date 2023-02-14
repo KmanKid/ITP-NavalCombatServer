@@ -15,6 +15,8 @@ public:
     int score;
     Ship ships[10];
     void setShip(int x, int y,int size, int orientation, int number);
+    bool isPlaying = false;
+    bool hasPlacedShips = false;
 };
 
 #endif // PLAYER_H

@@ -2,14 +2,14 @@
 
 Game::Game()
 {
-
+    playerOne.isPlaying = true;
 }
 
 void Game::processMessage(QWebSocket* sender,QString message)
 {
     QStringList mSplit = message.split("-");
 
-    if(mSplit[0] == "shot")
+    if(mSplit[0] == "shoot" && playerOne.hasPlacedShips && playerTwo.hasPlacedShips)
     {
         this->shoot(sender,mSplit[1].toInt(),mSplit[2].toInt());
     }
@@ -32,25 +32,53 @@ void Game::processMessage(QWebSocket* sender,QString message)
     }
 }
 
-int Game::shoot(QWebSocket* sender, int x, int y)
+void Game::shoot(QWebSocket* sender, int x, int y)
 {
-
+    qDebug() << "Player 1 playing: " << playerOne.isPlaying;
+    qDebug() << "Player 2 playing: " << playerTwo.isPlaying;
+    if(playerOne.isPlaying)
+    {
+        playerTwo.isPlaying = true;
+        playerTwo.socket->sendTextMessage("yourTurn-0");
+        playerOne.isPlaying = false;
+        playerOne.socket->sendTextMessage("notYourTurn-0");
+        if(playerTwo.board[x][y] == 1)
+        {
+            sender->sendTextMessage("setFieldState-right-" + QString::number(x) + "-"+ QString::number(y) + "-4");
+        }else
+        {
+            sender->sendTextMessage("setFieldState-right-" + QString::number(x) + "-"+ QString::number(y) + "-1");
+        }
+    }else
+    if(playerTwo.isPlaying)
+    {
+        playerOne.isPlaying = true;
+        playerOne.socket->sendTextMessage("yourTurn-0");
+        playerTwo.isPlaying = false;
+        playerTwo.socket->sendTextMessage("notYourTurn-0");
+        if(playerOne.board[x][y] == 1)
+        {
+            sender->sendTextMessage("setFieldState-right-" + QString::number(x) + "-"+ QString::number(y) + "-4");
+        }else
+        {
+            sender->sendTextMessage("setFieldState-right-" + QString::number(x) + "-"+ QString::number(y) + "-1");
+        }
+    }
 }
 
 void Game::playerConnected(QWebSocket* socket)
 {
     if(playerOne.socket == nullptr)
     {
+        qDebug() << "registered Player One";
         playerOne.socket = socket;
-        sendShipPositions(&playerOne);
-        //playerOne.socket->sendTextMessage("setFieldState-left-0-3-3");
-    }
-    if(playerTwo.socket == nullptr)
+
+    }else if(playerTwo.socket == nullptr)
     {
+        qDebug() << "registered Player Two";
         playerTwo.socket = socket;
-        sendShipPositions(&playerTwo);
-        //playerTwo.socket->sendTextMessage("setFieldState-left-0-3-3");
     }
+    playerOne.socket->sendTextMessage("yourTurn-0");
 }
 
 void Game::sendShipPositions(Player* player)
