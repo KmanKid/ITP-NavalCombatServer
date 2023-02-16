@@ -38,32 +38,52 @@ void Game::shoot(QWebSocket* sender, int x, int y)
     qDebug() << "Player 2 playing: " << playerTwo.isPlaying;
     if(playerOne.isPlaying)
     {
-        playerTwo.isPlaying = true;
-        playerTwo.socket->sendTextMessage("yourTurn-0");
-        playerOne.isPlaying = false;
-        playerOne.socket->sendTextMessage("notYourTurn-0");
         if(playerTwo.board[x][y] == 1)
         {
-            sender->sendTextMessage("setFieldState-right-" + QString::number(x) + "-"+ QString::number(y) + "-4");
-        }else
+            playerTwo.board[x][y] = 2;
+            if(playerTwo.isShipDestroyed(x,y))
+            {
+                playerTwo.destroyed += 1;
+                playerOne.score += 100;
+                playerOne.renderShipDestroyed(playerTwo.getShipFromCoordinates(x,y));
+            }else
+            {
+                sender->sendTextMessage("setFieldState-right-" + QString::number(x) + "-"+ QString::number(y) + "-4");
+            }
+        }else if (!(playerTwo.board[x][y] == 2))
         {
+            playerTwo.isPlaying = true;
+            playerTwo.socket->sendTextMessage("yourTurn-0");
+            playerOne.isPlaying = false;
+            playerOne.socket->sendTextMessage("notYourTurn-0");
             sender->sendTextMessage("setFieldState-right-" + QString::number(x) + "-"+ QString::number(y) + "-1");
         }
     }else
     if(playerTwo.isPlaying)
     {
-        playerOne.isPlaying = true;
-        playerOne.socket->sendTextMessage("yourTurn-0");
-        playerTwo.isPlaying = false;
-        playerTwo.socket->sendTextMessage("notYourTurn-0");
         if(playerOne.board[x][y] == 1)
         {
-            sender->sendTextMessage("setFieldState-right-" + QString::number(x) + "-"+ QString::number(y) + "-4");
-        }else
+            playerOne.board[x][y] = 2;
+            if(playerOne.isShipDestroyed(x,y))
+            {
+                playerOne.destroyed += 1;
+                playerTwo.score += 100;
+                playerTwo.renderShipDestroyed(playerOne.getShipFromCoordinates(x,y));
+            }else
+            {
+                sender->sendTextMessage("setFieldState-right-" + QString::number(x) + "-"+ QString::number(y) + "-4");
+            }
+        }else if (!(playerOne.board[x][y] == 2))
         {
+            playerOne.isPlaying = true;
+            playerOne.socket->sendTextMessage("yourTurn-0");
+            playerTwo.isPlaying = false;
+            playerTwo.socket->sendTextMessage("notYourTurn-0");
             sender->sendTextMessage("setFieldState-right-" + QString::number(x) + "-"+ QString::number(y) + "-1");
         }
     }
+    playerTwo.socket->sendTextMessage("setText-Destroyed: " + QString::number(playerOne.destroyed));
+    playerOne.socket->sendTextMessage("setText-Destroyed: " + QString::number(playerTwo.destroyed));
 }
 
 void Game::playerConnected(QWebSocket* socket)
@@ -72,11 +92,13 @@ void Game::playerConnected(QWebSocket* socket)
     {
         qDebug() << "registered Player One";
         playerOne.socket = socket;
+        playerOne.socket->sendTextMessage("setText-Please place your ships!");
 
     }else if(playerTwo.socket == nullptr)
     {
         qDebug() << "registered Player Two";
         playerTwo.socket = socket;
+        playerTwo.socket->sendTextMessage("setText-Please place your ships!");
     }
     playerOne.socket->sendTextMessage("yourTurn-0");
 }

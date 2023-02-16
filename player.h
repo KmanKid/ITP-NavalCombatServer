@@ -17,6 +17,10 @@ public:
     void setShip(int x, int y,int size, int orientation, int number);
     bool isPlaying = false;
     bool hasPlacedShips = false;
+    Ship* getShipFromCoordinates(int x, int y);
+    bool isShipDestroyed(int x,int y);
+    void renderShipDestroyed(Ship* ship);
+    int destroyed = 0;
 };
 
 #endif // PLAYER_H
