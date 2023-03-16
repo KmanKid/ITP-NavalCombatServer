@@ -3,6 +3,7 @@
 Player::Player()
 {
     socket = nullptr;
+    score = 0;
 }
 
 void Player::setShip(int x, int y,int size, int orientation, int number)

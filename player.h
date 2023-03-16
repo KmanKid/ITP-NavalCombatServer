@@ -9,7 +9,7 @@ class Player
 {
 public:
     Player();
-    // 0 means water, 1 means my Ship, 2 means my Ship hit -> enum ?
+    QString name;
     QWebSocket* socket;
     int board[10][10];
     int score;

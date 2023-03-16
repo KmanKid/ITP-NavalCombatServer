@@ -12,6 +12,7 @@ CONFIG -= app_bundle
 SOURCES += \
         game.cpp \
         main.cpp \
+        ncsavefilehandler.cpp \
         player.cpp \
         ship.cpp \
         websocketserver.cpp
@@ -23,6 +24,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     game.h \
+    ncsavefilehandler.h \
     player.h \
     ship.h \
     websocketserver.h

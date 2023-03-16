@@ -38,17 +38,20 @@ void Game::shoot(QWebSocket* sender, int x, int y)
     qDebug() << "Player 2 playing: " << playerTwo.isPlaying;
     if(playerOne.isPlaying)
     {
+        savefileHandler.writeTurn(playerOne,x,y);
         if(playerTwo.board[x][y] == 1)
         {
             playerTwo.board[x][y] = 2;
             if(playerTwo.isShipDestroyed(x,y))
             {
                 playerTwo.destroyed += 1;
-                playerOne.score += 100;
+                playerOne.score += playerTwo.getShipFromCoordinates(x,y)->length*25;
                 playerOne.renderShipDestroyed(playerTwo.getShipFromCoordinates(x,y));
+                playerTwo.socket->sendTextMessage("setFieldState-left-" + QString::number(x) + "-"+ QString::number(y) + "-3");
             }else
             {
-                sender->sendTextMessage("setFieldState-right-" + QString::number(x) + "-"+ QString::number(y) + "-4");
+                playerOne.socket->sendTextMessage("setFieldState-right-" + QString::number(x) + "-"+ QString::number(y) + "-4");
+                playerTwo.socket->sendTextMessage("setFieldState-left-" + QString::number(x) + "-"+ QString::number(y) + "-3");
             }
         }else if (!(playerTwo.board[x][y] == 2))
         {
@@ -56,22 +59,26 @@ void Game::shoot(QWebSocket* sender, int x, int y)
             playerTwo.socket->sendTextMessage("yourTurn-0");
             playerOne.isPlaying = false;
             playerOne.socket->sendTextMessage("notYourTurn-0");
-            sender->sendTextMessage("setFieldState-right-" + QString::number(x) + "-"+ QString::number(y) + "-1");
+            playerOne.socket->sendTextMessage("setFieldState-right-" + QString::number(x) + "-"+ QString::number(y) + "-1");
+            playerTwo.socket->sendTextMessage("setFieldState-left-" + QString::number(x) + "-"+ QString::number(y) + "-1");
         }
     }else
     if(playerTwo.isPlaying)
     {
+        savefileHandler.writeTurn(playerTwo,x,y);
         if(playerOne.board[x][y] == 1)
         {
             playerOne.board[x][y] = 2;
             if(playerOne.isShipDestroyed(x,y))
             {
                 playerOne.destroyed += 1;
-                playerTwo.score += 100;
+                playerTwo.score += playerOne.getShipFromCoordinates(x,y)->length*25;
                 playerTwo.renderShipDestroyed(playerOne.getShipFromCoordinates(x,y));
+                playerOne.socket->sendTextMessage("setFieldState-left-" + QString::number(x) + "-"+ QString::number(y) + "-3");
             }else
             {
-                sender->sendTextMessage("setFieldState-right-" + QString::number(x) + "-"+ QString::number(y) + "-4");
+                playerTwo.socket->sendTextMessage("setFieldState-right-" + QString::number(x) + "-"+ QString::number(y) + "-4");
+                playerOne.socket->sendTextMessage("setFieldState-left-" + QString::number(x) + "-"+ QString::number(y) + "-3");
             }
         }else if (!(playerOne.board[x][y] == 2))
         {
@@ -79,11 +86,24 @@ void Game::shoot(QWebSocket* sender, int x, int y)
             playerOne.socket->sendTextMessage("yourTurn-0");
             playerTwo.isPlaying = false;
             playerTwo.socket->sendTextMessage("notYourTurn-0");
-            sender->sendTextMessage("setFieldState-right-" + QString::number(x) + "-"+ QString::number(y) + "-1");
+            playerTwo.socket->sendTextMessage("setFieldState-right-" + QString::number(x) + "-"+ QString::number(y) + "-1");
+            playerOne.socket->sendTextMessage("setFieldState-left-" + QString::number(x) + "-"+ QString::number(y) + "-1");
         }
     }
-    playerTwo.socket->sendTextMessage("setText-Destroyed: " + QString::number(playerOne.destroyed));
-    playerOne.socket->sendTextMessage("setText-Destroyed: " + QString::number(playerTwo.destroyed));
+    playerOne.socket->sendTextMessage("setText-Score: " + QString::number(playerOne.score));
+    playerTwo.socket->sendTextMessage("setText-Score: " + QString::number(playerTwo.score));
+    if(playerTwo.destroyed==10)
+    {
+        playerTwo.socket->sendTextMessage("setText-You Lost");
+        playerOne.socket->sendTextMessage("setText-You Won");
+        savefileHandler.saveNewGame(playerOne,playerTwo);
+    }
+    if(playerOne.destroyed==10)
+    {
+        playerTwo.socket->sendTextMessage("setText-You Won");
+        playerOne.socket->sendTextMessage("setText-You Lost");
+        savefileHandler.saveNewGame(playerTwo,playerOne);
+    }
 }
 
 void Game::playerConnected(QWebSocket* socket)
@@ -93,12 +113,14 @@ void Game::playerConnected(QWebSocket* socket)
         qDebug() << "registered Player One";
         playerOne.socket = socket;
         playerOne.socket->sendTextMessage("setText-Please place your ships!");
+        playerOne.name = "Player One";
 
     }else if(playerTwo.socket == nullptr)
     {
         qDebug() << "registered Player Two";
         playerTwo.socket = socket;
         playerTwo.socket->sendTextMessage("setText-Please place your ships!");
+        playerTwo.name = "Player Two";
     }
     playerOne.socket->sendTextMessage("yourTurn-0");
 }
