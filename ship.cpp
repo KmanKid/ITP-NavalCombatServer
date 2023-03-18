@@ -2,6 +2,7 @@
 
 Ship::Ship()
 {
+    //Schiff initialisieren mit standartwerten
     this->posX = 0;
     this->posY = 0;
     this->length = 0;
@@ -11,6 +12,7 @@ Ship::Ship()
 
 Ship::Ship(int posX, int posY, int len, int ori)
 {
+    //Das Schiff mit benutzerdefinierten werten erzeugen
     this->posX = posX;
     this->posY = posY;
     this->length = len;

@@ -19,7 +19,6 @@ public:
 private slots:
     void onTextMessageReceived(QString message);
     void onNewConnection();
-    void onBinaryMessageReceived(QByteArray message);
     void onSocketDisconnected();
 private:
     Game game;

@@ -7,10 +7,13 @@ class Ship
 public:
     Ship();
     Ship(int posX, int posY, int len, int ori);
+    //X-Koordinate Bug
     int posX;
+    //Y-Koordinate Bug
     int posY;
+    //Länge
     int length;
-    //Orientation can be 0 for horizontal and 1 for vertical
+    //Orientation ist entweder 0 für Vertikal oder 1 für horizontal
     int orientation;
 };
 
