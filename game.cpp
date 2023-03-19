@@ -26,6 +26,11 @@ void Game::processMessage(QWebSocket* sender,QString message)
             this->playerOne.setShip(mSplit[1].toInt(),mSplit[2].toInt(),mSplit[3].toInt(),mSplit[4].toInt(),mSplit[5].toInt());
             sendShipPositions(&playerOne);
         }
+        if(mSplit[0] == "funk")
+        {
+            //Setzte den "Funk" des Gegners auf entsprechenden Wert
+            this->playerTwo.socket->sendTextMessage("setFeindFunk-"+mSplit[1]);
+        }
     }
     if(sender==playerTwo.socket)
     {
@@ -34,6 +39,11 @@ void Game::processMessage(QWebSocket* sender,QString message)
             //neues Schiff setzten
             this->playerTwo.setShip(mSplit[1].toInt(),mSplit[2].toInt(),mSplit[3].toInt(),mSplit[4].toInt(),mSplit[5].toInt());
             sendShipPositions(&playerTwo);
+        }
+        if(mSplit[0] == "funk")
+        {
+            //Setzte den "Funk" des Gegners auf entsprechenden Wert
+            this->playerOne.socket->sendTextMessage("setFeindFunk-"+mSplit[1]);
         }
     }
 }
