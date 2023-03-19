@@ -31,6 +31,11 @@ void Game::processMessage(QWebSocket* sender,QString message)
             //Setzte den "Funk" des Gegners auf entsprechenden Wert
             this->playerTwo.socket->sendTextMessage("setFeindFunk-"+mSplit[1]);
         }
+        if(mSplit[0] == "name")
+        {
+            //Setzte eigenen Namen auf Parameter
+            this->playerOne.name = mSplit[1];
+        }
     }
     if(sender==playerTwo.socket)
     {
@@ -44,6 +49,11 @@ void Game::processMessage(QWebSocket* sender,QString message)
         {
             //Setzte den "Funk" des Gegners auf entsprechenden Wert
             this->playerOne.socket->sendTextMessage("setFeindFunk-"+mSplit[1]);
+        }
+        if(mSplit[0] == "name")
+        {
+            //Setzte eigenen Namen auf Parameter
+            this->playerTwo.name = mSplit[1];
         }
     }
 }
