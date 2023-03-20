@@ -1,5 +1,11 @@
 #include "websocketserver.h"
 
+WebSocketServer* WebSocketServer::getInstance(quint16 port, QObject *parent)
+{
+    static WebSocketServer instance = WebSocketServer(port,parent);
+    return &instance;
+}
+
 WebSocketServer::WebSocketServer(quint16 port, QObject *parent) :
     QObject(parent),
     socketServer(QStringLiteral("ITP-Project Server"), QWebSocketServer::NonSecureMode, this)

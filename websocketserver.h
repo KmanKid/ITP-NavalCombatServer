@@ -14,13 +14,14 @@ class WebSocketServer : public QObject
 {
     Q_OBJECT
 public:
-    WebSocketServer(quint16 port, QObject *parent = 0);
+    static WebSocketServer* getInstance(quint16 port, QObject *parent = 0);
     ~WebSocketServer();
 private slots:
     void onTextMessageReceived(QString message);
     void onNewConnection();
     void onSocketDisconnected();
 private:
+    WebSocketServer(quint16 port, QObject *parent = 0);
     Game game;
     QWebSocketServer socketServer;
     QWebSocket* socketArray[2];

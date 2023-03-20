@@ -154,7 +154,7 @@ void Game::shoot(QWebSocket* sender, int x, int y)
         playerOne.socket->sendTextMessage("setText-You Won");
         //Das Ergebnis in der highscore csv speichern
         savefileHandler.saveNewGame(playerOne,playerTwo);
-    }
+    }else
     //Wenn Spieler 2 alle Schiffe zerstört hat
     if(playerOne.destroyed==10)
     {
